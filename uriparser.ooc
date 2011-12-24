@@ -47,12 +47,12 @@ URI: class {
         if (tmp contains?(':') && ((tmp indexOf(':') < tmp indexOf('/')) ||
                                   (!tmp contains?('/') && tmp split(':') size == 2))\
            ) {
-            // if we're here, we have "scheme://user:pass@host:port/path"
+            // if we're here, we have "scheme://userinfo@host:port/path"
             parts = tmp split(':')
             host  = parts[0]
             tmp   = ":" + parts[1]
         } else if (tmp contains?('/')) {
-            // if we're here, we have "scheme://user:pass@host/path"
+            // if we're here, we have "scheme://userinfo@host/path"
             parts = tmp split('/', 2)
             host  = parts[0]
             if (tmp length() > 1)
@@ -60,7 +60,7 @@ URI: class {
             else
                 tmp = "/"
         } else {
-            // if we're here, we have "scheme://user:pass@host"
+            // if we're here, we have "scheme://userinfo@host"
             host = tmp
             tmp  = ""
         }
