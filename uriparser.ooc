@@ -236,6 +236,14 @@ test([
     "http://duckinator.net/test?a=b&c="
     "http://duckinator.net/test?a=b&c"
     "magnet:?xl=10826029&dn=mediawiki-1.15.1.tar.gz&xt=urn:tree:tiger:7N5OAMRNGMSSEUE3ORHOKWN4WWIQ5X4EBOOTLJY"
+    "ftp://ftp.is.co.za/rfc/rfc1808.txt"
+    "http://www.ietf.org/rfc/rfc2396.txt"
+    "mailto:John.Doe@example.com"
+    "news:comp.infosystems.www.servers.unix"
+    "tel:+1-816-555-1212"
+    "telnet://192.0.2.16:80/"
+    "urn:oasis:names:specification:docbook:dtd:xml:4.1.2"
+    "ldap://[2001:db8::7]/c=GB?objectClass?one"
     "http://example.com:-1"
 ] as ArrayList<String>)
 
