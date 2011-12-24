@@ -44,11 +44,16 @@ URI: class {
         }
 
         // Get host
-        if (tmp contains?(':') && ((tmp indexOf(':') < tmp indexOf('/')) ||
+        if (tmp contains?('[') && tmp contains?(']') &&
+            (tmp indexOf('[') < tmp indexOf(']'))){
+            parts = tmp split(']', 2)
+            host  = parts[0] + ']'
+            tmp   = parts[1]
+        } else if (tmp contains?(':') && ((tmp indexOf(':') < tmp indexOf('/')) ||
                                   (!tmp contains?('/') && tmp split(':') size == 2))\
            ) {
             // if we're here, we have "scheme://userinfo@host:port/path"
-            parts = tmp split(':')
+            parts = tmp split(':', 2)
             host  = parts[0]
             tmp   = ":" + parts[1]
         } else if (tmp contains?('/')) {
@@ -68,7 +73,7 @@ URI: class {
         // Get port
         if (tmp contains?(':')) {
             _portInOriginal = true // We have a port in the URI
-            parts = tmp split(':')
+            parts = tmp split(':', 2)
             tmp = parts[1]
             if (tmp[0] == '/' || tmp[0] == '?' || tmp[0] == '#') {
                 // TODO: Can this be done better?
@@ -80,12 +85,12 @@ URI: class {
                 tmp   = "/" + parts[1]
             } else if (tmp contains?('?')) {
                 // if we're here, we have "scheme://host:port?query"
-                parts = tmp split('?')
+                parts = tmp split('?', 2)
                 port  = parts[0] toInt()
                 tmp   = "?" + parts[1]
             } else if (tmp contains?('#')) {
                 // if we're here, we have "scheme://host:port#fragment"
-                parts = tmp split('#')
+                parts = tmp split('#', 2)
                 port  = parts[0] toInt()
                 tmp   = "#" + parts[1]
             } else {
@@ -112,12 +117,12 @@ URI: class {
         if (tmp indexOf('/') < tmp indexOf('?') && 
             (!tmp contains?('#') || tmp indexOf('?') < tmp indexOf('#'))) {
             // if we're here, we have scheme://.../path?query#fragment
-            parts = tmp split('?')
+            parts = tmp split('?', 2)
             path  = parts[0]
             tmp   = "?" + parts[1]
         } else if (tmp indexOf('/') < tmp indexOf('#')) {
             // if we're here, we have scheme://.../path#fragment
-            parts = tmp split('#')
+            parts = tmp split('#', 2)
             path  = parts[0]
             tmp   = "#" + parts[1]
         } else {
@@ -128,25 +133,27 @@ URI: class {
         // Get querystring and fragment
         if (tmp contains?('?') && tmp indexOf('?') < tmp indexOf('#')) {
             // if we're here, we have scheme://.../path?query#fragment
-            parts       = tmp split('?')
-            queryParts := parts[1] split('#')
+            parts       = tmp split('?', 2)
+            queryParts := parts[1] split('#', 2)
             queryString = queryParts[0]
             fragment    = queryParts[1]
             tmp         = ""
         } else if (tmp contains?('#')) {
             // if we're here, we have scheme://.../path#fragment
-            parts    = tmp split('#')
+            parts    = tmp split('#', 2)
             fragment = parts[1]
             tmp      = ""
         } else if (tmp contains?('?')) {
             // if we're here, we have scheme://.../path?query
-            parts       = tmp split('?')
+            parts       = tmp split('?', 2)
             queryString = parts[1]
             tmp         = ""
         }
         
-        scheme = scheme toLower()
-        host   = host toLower()
+        if (_doubleSlashStart) {
+            scheme = scheme toLower()
+            host   = host toLower()
+        }
         
         if (path empty?() && _doubleSlashStart)
             path = "/"
@@ -204,7 +211,7 @@ test: func (originals: ArrayList<String>) {
             queryParts add("%s=%s" format(k, v))
         )
         generatedQueryString := queryParts join('&')
-        "%s\n%s\n%s\n%s\n\n" printfln(original, parsed full, generatedQueryString, parsed queryString)
+        //"%s\n%s\n%s\n%s\n\n" printfln(original, parsed full, generatedQueryString, parsed queryString)
     )
 }
 
