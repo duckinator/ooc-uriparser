@@ -16,8 +16,6 @@ URI: class {
     port        := -1 // Why? Idk. More sensible than 80, to me.
     path        := ""
     userinfo    := ""
-    user        := ""
-    password    := ""
     queryString := ""
     fragment    := ""
     query: HashMap<String, String> // for: query[key] //=> val
@@ -41,13 +39,7 @@ URI: class {
         // Get userinfo, if it's there
         if (tmp contains?('@')) {
             parts = tmp split('@')
-            if (parts[0] contains?(':')) {
-                userinfo   = parts[0]
-                // This "userparts" thing is a bit annoying, but I couldn't come up with a better method...
-                userparts := userinfo split(':')
-                user       = userparts[0]
-                password   = userparts[1]
-            }
+            userinfo = parts[0]
             tmp = parts[1]
         }
 
@@ -61,7 +53,7 @@ URI: class {
             tmp   = ":" + parts[1]
         } else if (tmp contains?('/')) {
             // if we're here, we have "scheme://user:pass@host/path"
-            parts = tmp split('/')
+            parts = tmp split('/', 2)
             host  = parts[0]
             if (tmp length() > 1)
                 tmp = "/" + parts[1]
@@ -80,7 +72,7 @@ URI: class {
             tmp = parts[1]
             if (tmp contains?('/')) {
                 // if we're here, we have "scheme://host:port/path"
-                parts = tmp split('/')
+                parts = tmp split('/', 2)
                 port  = parts[0] toInt()
                 tmp   = "/" + parts[1]
             } else if (tmp contains?('?')) {
@@ -99,6 +91,7 @@ URI: class {
             }
         } else {
             // No port specified. Handle default port on a per-scheme basis. Argh!
+            // TODO: Use getservent() and friends to deal with this
             port = match  (scheme) {
                 case "http"   => 80
                 case "https"  => 443
@@ -146,8 +139,15 @@ URI: class {
             queryString = parts[1]
             tmp         = ""
         }
-        full  = getFullURI()
-        query = getQuery()
+        
+        scheme = scheme toLower()
+        host   = host toLower()
+        
+        if (path empty?() && _doubleSlashStart)
+            path = "/"
+        
+        full   = getFullURI()
+        query  = getQuery()
     }
 
     getFullURI: func -> String {
@@ -243,6 +243,14 @@ test([
     "tel:+1-816-555-1212"
     "telnet://192.0.2.16:80/"
     "urn:oasis:names:specification:docbook:dtd:xml:4.1.2"
+    "example://a/b/c/%7Bfoo%7D"
+    "eXAMPLE://a/./b/../b/%63/%7bfoo%7d"
+    "eXAMPLE://A/./b/../b/%63/%7bfoo%7d"
+    "http://example.com"
+    "http://example.com/"
+//    "http://example.com:/"
+    "http://example.com:80/"
+    "ftp://cnn.example.com&story=breaking_news@10.0.0.1/top_story.htm"
     "ldap://[2001:db8::7]/c=GB?objectClass?one"
     "http://example.com:-1"
 ] as ArrayList<String>)
