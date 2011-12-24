@@ -157,6 +157,19 @@ URI: class {
         
         if (path empty?() && _doubleSlashStart)
             path = "/"
+
+        if ((path size - 1) >= 2) {
+            i := 0
+            while ((i + 1) < path size) {
+                if (path[i] == '/' && path[i+1] == '.') {
+                    if ((path size -1) < (i + 2)) // (path size - 1) < (i + 2)
+                        path = path[0..i]
+                    else if ((path size - 1) >= (i + 2) && path[i+2] != '.')
+                        path = path[0..i] + path[(i+2)..-1]
+                }
+                i += 1
+            }
+        }
         
         full   = getFullURI()
         query  = getQuery()
@@ -259,6 +272,30 @@ test([
     "example://a/b/c/%7Bfoo%7D"
     "eXAMPLE://a/./b/../b/%63/%7bfoo%7d"
     "eXAMPLE://A/./b/../b/%63/%7bfoo%7d"
+    "http://example.com/a/./b"
+    "http://example.com/a/./"
+    "http://example.com/a/."
+    "http://example.com/a/../b"
+    "http://example.com/a/../"
+    "http://example.com/a/.."
+    "http://example.com/a/./../b"
+    "http://example.com/a/./../"
+    "http://example.com/a/./.."
+    "http://example.com/./b"
+    "http://example.com/./"
+    "http://example.com/."
+    "http://example.com/../b"
+    "http://example.com/../"
+    "http://example.com/.."
+    "http://example.com/./../b"
+    "http://example.com/./../"
+    "http://example.com/./.."
+    "http://example.com/././../b"
+    "http://example.com/././../"
+    "http://example.com/././.."
+    "http://example.com/././b"
+    "http://example.com/././"
+    "http://example.com/./."
     "http://example.com"
     "http://example.com/"
     "http://example.com:/"
