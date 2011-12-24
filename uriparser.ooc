@@ -212,6 +212,7 @@ test: func (originals: ArrayList<String>) {
         )
         generatedQueryString := queryParts join('&')
         //"%s\n%s\n%s\n%s\n\n" printfln(original, parsed full, generatedQueryString, parsed queryString)
+        "%s\n%s\n\n" printfln(original, parsed full)
     )
 }
 
