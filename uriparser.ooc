@@ -70,7 +70,10 @@ URI: class {
             _portInOriginal = true // We have a port in the URI
             parts = tmp split(':')
             tmp = parts[1]
-            if (tmp contains?('/')) {
+            if (tmp[0] == '/' || tmp[0] == '?' || tmp[0] == '#') {
+                // TODO: Can this be done better?
+                _portInOriginal = false
+            } else if (tmp contains?('/')) {
                 // if we're here, we have "scheme://host:port/path"
                 parts = tmp split('/', 2)
                 port  = parts[0] toInt()
@@ -89,7 +92,9 @@ URI: class {
                 // if we're here, we have "scheme://host:port"
                 port = tmp toInt()
             }
-        } else {
+        }
+        
+        if (!_portInOriginal) {
             // No port specified. Handle default port on a per-scheme basis. Argh!
             // TODO: Use getservent() and friends to deal with this
             port = match  (scheme) {
@@ -248,7 +253,7 @@ test([
     "eXAMPLE://A/./b/../b/%63/%7bfoo%7d"
     "http://example.com"
     "http://example.com/"
-//    "http://example.com:/"
+    "http://example.com:/"
     "http://example.com:80/"
     "ftp://cnn.example.com&story=breaking_news@10.0.0.1/top_story.htm"
     "ldap://[2001:db8::7]/c=GB?objectClass?one"
