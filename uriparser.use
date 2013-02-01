@@ -1,0 +1,8 @@
+Name: uriparser
+Version: 0.1
+Description: A URI parser implemented in ooc.
+#Pkgs: 
+#Includes: 
+Imports: uriparser/uriparser
+SourcePath: source
+
