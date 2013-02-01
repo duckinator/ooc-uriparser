@@ -2,7 +2,7 @@
 
 ### Authors
 
-  *  <nick@duckinator.net>
+  * Nick Markwell <nick@duckinator.net>
   
 ### Links
 
